@@ -1,2 +1,4 @@
 Django==1.11.8
+gunicorn==19.7.1
 pytz==2018.3
+python-dotenv==0.7.1
