@@ -4,3 +4,4 @@ python-dotenv==0.7.1
 pytz==2018.3
 requests==2.18.4
 urllib3==1.22
+gevent==1.2.2
