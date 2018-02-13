@@ -51,41 +51,41 @@ daily_file_manager = DailyFileManager()
 class DailyLogForm(forms.Form):
     name = forms.CharField()
     created = forms.CharField()
-    level = forms.CharField()
+    levelname = forms.CharField()
     process = forms.CharField()
     thread = forms.CharField()
     filename = forms.CharField()
-    line_no = forms.CharField()
+    lineno = forms.CharField()
     module = forms.CharField()
-    func_name = forms.CharField()
+    funcName = forms.CharField()
     msg = forms.CharField()
-    log_path = forms.CharField()
+    logPath = forms.CharField()
 
     def write_file(self):
         created = self.cleaned_data['created']
 
-        level = self.cleaned_data["level"]
+        levelname = self.cleaned_data["levelname"]
         process = self.cleaned_data['process']
         thread = self.cleaned_data['thread']
 
         filename = self.cleaned_data['filename']
-        line_no = self.cleaned_data["line_no"]
+        lineno = self.cleaned_data["lineno"]
         module = self.cleaned_data['module']
 
-        func_name = self.cleaned_data["func_name"]
+        funcName = self.cleaned_data["funcName"]
         msg = self.cleaned_data['msg']
 
-        log_path = self.cleaned_data["log_path"]
+        logPath = self.cleaned_data["logPath"]
         time = datetime.datetime.fromtimestamp(float(created)).strftime('%Y-%m-%d %H:%M:%S')
 
-        data = "%s | %s | %s : %s | %s: %s | %s. %s | %s \n" % (
-            time, level, process, thread, filename, line_no, module, func_name, msg
+        data = "%s | %s | %s:%s | %s:%s | %s.%s | %s \n" % (
+            time, levelname, process, thread, filename, lineno, module, funcName, msg
         )
 
-        if not daily_file_manager.is_open(log_path):
-            daily_file_manager.open(log_path)
+        if not daily_file_manager.is_open(logPath):
+            daily_file_manager.open(logPath)
 
         if six.PY2:
             data = data.encode('UTF-8')
 
-        daily_file_manager.write(log_path, data)
+        daily_file_manager.write(logPath, data)
