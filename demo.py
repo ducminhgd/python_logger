@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging.config
 import time
-import sys
 
 LOGGING = {
     'version': 1,
