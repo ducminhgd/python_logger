@@ -10,12 +10,19 @@ class DailyFileManager(object):
 
     def __init__(self):
         self.open_files = {}
-        self.current_date = timezone.now().date()
+        self.current_dates = {}
 
     def is_open(self, file_name):
-        if timezone.now().date() != self.current_date:
+        current_date = timezone.now().date()
+
+        if file_name in self.current_dates and self.current_dates[file_name] != current_date:
+            is_diff_date = True
+        else:
+            is_diff_date = False
+
+        if is_diff_date:
             # Archive file
-            old_current_date = self.current_date
+            old_current_date = self.current_dates[file_name]
             archive_file_name = '%s.%s' % (file_name, old_current_date)
 
             opened_file = self.open_files.get(file_name, None)
@@ -29,15 +36,16 @@ class DailyFileManager(object):
             else:
                 os.rename(file_name, archive_file_name)
 
-            self.current_date = timezone.now().date()
+            self.current_dates[file_name] = current_date
             for key in self.open_files:
                 self.open_files[key].close()
                 self.open_files[key] = open('%s' % key, 'a')
-
         if file_name in self.open_files:
             return True
+        return False
 
     def open(self, file_name):
+        self.current_dates[file_name] = timezone.now().date()
         self.open_files[file_name] = open('%s' % file_name, 'a')
 
     def write(self, file_name, data):
