@@ -7,10 +7,10 @@ from django.utils import timezone, six
 
 
 class DailyFileManager(object):
+    current_dates = {}
 
     def __init__(self):
         self.open_files = {}
-        self.current_dates = {}
 
     def is_open(self, file_name):
         current_date = timezone.now().date()
@@ -23,7 +23,8 @@ class DailyFileManager(object):
         if is_diff_date:
             # Archive file
             old_current_date = self.current_dates[file_name]
-            archive_file_name = '%s.%s' % (file_name, old_current_date)
+            name, ext = os.path.splitext(file_name)
+            archive_file_name = '%s.%s%s' % (name, old_current_date, ext)
 
             opened_file = self.open_files.get(file_name, None)
             if opened_file:
