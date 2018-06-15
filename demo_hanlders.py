@@ -10,7 +10,7 @@ class PersistentHTTPHandler(HTTPHandler):
     def mapLogRecord(self, record):
         record_modified = HTTPHandler.mapLogRecord(self, record)
         record_modified['logPath'] = self.logPath
-        record_modified['msg'] = record_modified['msg'].encode('utf-8')
+        record_modified['msg'] = (record_modified['msg'] % record_modified['args']).encode('utf-8')
         return record_modified
 
     def emit(self, record):
