@@ -34,7 +34,10 @@ class PersistentHTTPHandler(HTTPHandler):
     def mapLogRecord(self, record):
         record_modified = HTTPHandler.mapLogRecord(self, record)
         record_modified['logPath'] = self.logPath
-        record_modified['msg'] = record_modified['msg'] % record_modified['args']
+        try:
+            record_modified['msg'] = record_modified['msg'] % record_modified['args']
+        except:
+            pass
         if record_modified['exc_info'] is not None:
             record_modified['msg'] = '\n'.join([
                 record_modified['msg'],
