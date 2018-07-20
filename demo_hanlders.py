@@ -35,15 +35,9 @@ class PersistentHTTPHandler(HTTPHandler):
         record_modified = HTTPHandler.mapLogRecord(self, record)
         record_modified['logPath'] = self.logPath
         try:
-            record_modified['msg'] = record_modified['msg'] % record_modified['args']
+            record_modified['msg'] = self.format(record)
         except:
             pass
-        if record_modified['exc_info'] is not None:
-            record_modified['msg'] = '\n'.join([
-                record_modified['msg'],
-                format_stack_trace(record_modified['exc_info'])
-            ])
-        record_modified['msg'] = record_modified['msg'].encode('utf-8')
         return record_modified
 
     def emit(self, record):

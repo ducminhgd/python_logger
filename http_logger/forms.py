@@ -61,30 +61,13 @@ class DailyLogForm(forms.Form):
     logPath = forms.CharField()
 
     def write_file(self):
-        created = self.cleaned_data['created']
-
-        levelname = self.cleaned_data["levelname"]
-        process = self.cleaned_data['process']
-        thread = self.cleaned_data['thread']
-
-        filename = self.cleaned_data['filename']
-        lineno = self.cleaned_data["lineno"]
-        module = self.cleaned_data['module']
-
-        funcName = self.cleaned_data["funcName"]
-        msg = self.cleaned_data['msg']
-
+        msg = self.cleaned_data['msg'] + '\n'
         logPath = self.cleaned_data["logPath"]
-        time = datetime.datetime.fromtimestamp(float(created)).strftime('%Y-%m-%d %H:%M:%S')
-
-        data = "%s | %s | %s:%s | %s:%s | %s.%s | %s \n" % (
-            time, levelname, process, thread, filename, lineno, module, funcName, msg
-        )
 
         if not daily_file_manager.is_open(logPath):
             daily_file_manager.open(logPath)
 
         if six.PY2:
-            data = data.encode('UTF-8')
+            msg = msg.encode('UTF-8')
 
-        daily_file_manager.write(logPath, data)
+        daily_file_manager.write(logPath, msg)
