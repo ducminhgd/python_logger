@@ -5,7 +5,7 @@ import os
 from django import forms
 from django.utils import timezone, six
 
-from http_logger.models.logs import Log
+from http_logger.models.mongodb_logs import MongoDbLog
 
 
 class DailyFileManager(object):
@@ -76,5 +76,5 @@ class DailyLogForm(forms.Form):
 
     def store_db(self):
         msg = self.cleaned_data['msg']
-        log = Log(content=msg)
+        log = MongoDbLog(log_content=msg)
         log.save()
