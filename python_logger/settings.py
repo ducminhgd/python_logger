@@ -12,12 +12,6 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 from dotenv import load_dotenv, find_dotenv
-from mongoengine import connect
-
-MONGODB_HOST = os.environ.get('MONGODB_HOST', '127.0.0.1')
-MONGODB_NAME = os.environ.get('MONGODB_NAME', 'logs')
-
-connect(MONGODB_NAME, host=MONGODB_HOST)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -60,3 +54,11 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+MONGO_DATABASES = {
+    'default': {
+        'host' : os.environ.get('DEFAULT_MONGODB_HOST', '127.0.0.1'),
+        'name' : os.environ.get('DEFAULT_MONGODB_NAME', 'logs'),
+        'port' : os.environ.get('DEFAULT_MONGODB_PORT', '27017')
+    },
+}

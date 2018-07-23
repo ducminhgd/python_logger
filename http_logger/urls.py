@@ -1,7 +1,5 @@
 from django.conf.urls import url
 from django.views.decorators.csrf import csrf_exempt
-
-
 from http_logger.views import daily_logger_http, mongo_logger_http
 
 urlpatterns = [

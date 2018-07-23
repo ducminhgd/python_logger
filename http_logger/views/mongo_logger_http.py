@@ -5,7 +5,6 @@ from http_logger import forms
 
 
 class HTTPMongoLogView(View):
-
     def dispatch(self, request, *args, **kwargs):
         if request.method == 'POST':
             data = request.POST.dict()
