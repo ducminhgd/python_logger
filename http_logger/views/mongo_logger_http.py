@@ -12,6 +12,7 @@ class HTTPMongoLogView(View):
         else:
             data = request.GET.dict()
         form = forms.DailyLogForm(data=data)
+
         if not form.is_valid():
             return HttpResponse('', status=400)
         form.store_db()
