@@ -5,6 +5,8 @@ import os
 from django import forms
 from django.utils import timezone, six
 
+from http_logger.models.logs import Log
+
 
 class DailyFileManager(object):
 
@@ -71,3 +73,8 @@ class DailyLogForm(forms.Form):
             msg = msg.encode('UTF-8')
 
         daily_file_manager.write(logPath, msg)
+
+    def store_db(self):
+        msg = self.cleaned_data['msg']
+        log = Log(content=msg)
+        log.save()
