@@ -3,15 +3,7 @@
 
 ## Sample configuration
 
-### Log Server Side
-```dotenv
-DEFAULT_MONGODB_HOST = 127.0.0.1
-DEFAULT_MONGODB_PORT = 27017
-DEFAULT_MONGODB_DB_NAME = test
-DEFAULT_MONGODB_COLLECTION = logs
-```
-
-### Log Client Side
+### Client Side
 ```python
 LOGGING = {
     'version': 1,
@@ -49,6 +41,8 @@ LOGGING = {
 
 ## Sample Log Hanlder
 
+### File HTTP Handler
+
 ```python
 import requests
 from logging.handlers import HTTPHandler
@@ -72,6 +66,47 @@ class PersistentHTTPHandler(HTTPHandler):
             url = 'http://' + host + '/' + url
             data = self.mapLogRecord(record)
             self.s.post(url, data=data, timeout=10)
+
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
+```
+
+### Mongo HTTP Handler
+
+```python
+class MongoHTTPHandler(HTTPHandler):
+    def __init__(self, db_host, db_port, db_name, collection, host, url, method):
+        HTTPHandler.__init__(self, host, url, method)
+        self.db_host = db_host
+        self.db_port = db_port
+        self.db_name = db_name
+        self.collection = collection
+        self.s = requests.Session()
+
+    def mapLogRecord(self, record):
+        record_modified = HTTPHandler.mapLogRecord(self, record)
+        try:
+            record_modified['msg'] = self.format(record)
+        except:
+            pass
+        return record_modified
+
+    def emit(self, record):
+        try:
+            host = self.host
+            url = self.url
+            url = 'http://' + host + '/' + url
+            data = self.mapLogRecord(record)
+            json_data = {
+                'db_host': self.db_host,
+                'db_port': self.db_port,
+                'db_name': self.db_name,
+                'collection': self.collection,
+                'data': data,
+            }
+            self.s.post(url, json=json.dumps(json_data), timeout=10)
 
         except (KeyboardInterrupt, SystemExit):
             raise
