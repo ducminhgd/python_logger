@@ -1,7 +1,7 @@
 from django.views.generic import View
 from django.http import HttpResponse
 
-from http_logger import forms
+from http_logger.forms import mongo_log_form
 
 
 class HTTPMongoLogView(View):
@@ -10,7 +10,7 @@ class HTTPMongoLogView(View):
             data = request.POST.dict()
         else:
             data = request.GET.dict()
-        form = forms.DailyLogForm(data=data)
+        form = mongo_log_form.MongoLogForm(data=data)
 
         if not form.is_valid():
             return HttpResponse('', status=400)

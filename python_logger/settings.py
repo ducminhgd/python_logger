@@ -58,7 +58,6 @@ USE_TZ = True
 MONGO_DATABASES = {
     'default': {
         'host' : os.environ.get('DEFAULT_MONGODB_HOST', '127.0.0.1'),
-        'name' : os.environ.get('DEFAULT_MONGODB_NAME', 'logs'),
-        'port' : os.environ.get('DEFAULT_MONGODB_PORT', '27017')
+        'port' : os.environ.get('DEFAULT_MONGODB_PORT', '27017'),
     },
 }

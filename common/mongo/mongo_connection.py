@@ -1,15 +1,24 @@
 from pymongo import MongoClient
+from django.conf import settings
 
 
-class MongoConnection(object):
-    def __init__(self, db):
-        name = db['name']
-        host = db['host']
-        port = int(db['port'])
-        if name is None or host is None or port is None:
-            return
-        client = MongoClient(host=host, port=port)
-        self.db = client[name]
+class MongoConnectionBase(object):
+    _connections = {}
 
-    def get_collection(self, name):
-        self.collection = self.db[name]
+    def __init__(self):
+        for key in settings.MONGO_DATABASES:
+            config = settings.MONGO_DATABASES[key]
+            host = config['host']
+            port = int(config['port'])
+            key = config['host'] + config['port']
+            if key not in self._connections.keys():
+                self._connections[key] = MongoClient(host=host, port=port, connect=False)
+
+    def get_collection(self, host, port, db_name, collection):
+        key = host + port
+        if key not in self._connections.keys():
+            self._connections[key] = MongoClient(host=host, port=int(port), connect=False)
+        return self._connections[key][db_name][collection]
+
+
+mongo_connector = MongoConnectionBase()
