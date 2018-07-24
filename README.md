@@ -3,6 +3,15 @@
 
 ## Sample configuration
 
+### Log Server Side
+```dotenv
+DEFAULT_MONGODB_HOST = 127.0.0.1
+DEFAULT_MONGODB_PORT = 27017
+DEFAULT_MONGODB_DB_NAME = test
+DEFAULT_MONGODB_COLLECTION = logs
+```
+
+### Log Client Side
 ```python
 LOGGING = {
     'version': 1,
@@ -16,10 +25,21 @@ LOGGING = {
             'method': 'POST',
             'logPath': '/tmp/python_logger/log'
         },
+        'test_mongo': {
+            'level': 'INFO',
+            'class': 'demo_handlers.MongoHTTPHandler',
+            'url': 'http-mongo-logger/',
+            'host': 'localhost:1234',
+            'method': 'POST',
+            'db_host': '127.0.0.1',
+            'db_port': '27017',
+            'db_name': 'logs',
+            'collection': 'logs',
+        }
     },
     'loggers': {
         'test_logger': {
-            'handlers': ['test'],
+            'handlers': ['test', 'test_mongo'],
             'level': 'INFO',
             'propagate': True,
         },
@@ -88,3 +108,8 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
+
+## Contributors
+
+- ducminhgd
+- vchitai
