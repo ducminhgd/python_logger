@@ -10,15 +10,15 @@ class MongoConnectionBase(object):
             config = settings.MONGO_DATABASES[key]
             host = config['host']
             port = int(config['port'])
-            key = config['host'] + config['port']
+            key = config['host'] + ":" + config['port']
             if key not in self._connections.keys():
                 self._connections[key] = MongoClient(host=host, port=port, connect=False)
 
-    def get_collection(self, host, port, db_name, collection):
+    def get_connection(self, host, port):
         key = host + port
         if key not in self._connections.keys():
             self._connections[key] = MongoClient(host=host, port=int(port), connect=False)
-        return self._connections[key][db_name][collection]
+        return self._connections[key]
 
 
 mongo_connector = MongoConnectionBase()

@@ -22,9 +22,17 @@ class MongoLogForm(forms.Form):
     collection = forms.CharField()
 
     def store_db(self):
-        collection = mongo_connector.get_collection(host=self.cleaned_data['db_host'],
-                                                    port=self.cleaned_data['db_port'],
-                                                    db_name=self.cleaned_data['db_name'],
-                                                    collection=self.cleaned_data['collection'])
-        # msg = self.cleaned_data['msg']
-        collection.insert_one(self.__dict__['data'])
+        collection = mongo_connector.get_connection(host=self.cleaned_data['db_host'],
+                                                    port=self.cleaned_data['db_port'])
+        db_name = self.cleaned_data['db_name']
+        collection_name = self.cleaned_data['collection']
+        collection = collection[db_name][collection_name]
+        exclude_field = [
+            'db_name',
+            'db_host',
+            'db_port',
+            'collection',
+        ]
+        data = self.__dict__['data']
+        store_data = {field: data.get(field, '') for field in data.keys() if field not in exclude_field}
+        collection.insert_one(store_data)
