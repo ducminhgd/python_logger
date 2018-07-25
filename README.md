@@ -98,7 +98,7 @@ class MongoHTTPHandler(HTTPHandler):
             record_modified['msg'] = self.format(record)
         except:
             pass
-        record_modified['exc_info'] = format_exc_info(record_modified['exc_info'])
+        record_modified['exc_info'] = format_stack_trace(record_modified['exc_info'])
         record_modified['args'] = str(record_modified['args'])
         return record_modified
 
