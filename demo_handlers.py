@@ -1,29 +1,8 @@
 import json
-import traceback
-
 import requests
 from logging.handlers import HTTPHandler
 
-
-def format_stack_trace(exc_info):
-    """
-    Format exception info as string
-    :param exc_info: exception info
-    :return: string
-    :example:
-
-    import sys
-
-    try:
-        ...
-    except:
-        exc_info = sys.exc_info()
-        print(format_stack_trace(exc_info))
-    """
-    if exc_info[0] is None:
-        return ''
-    lines = traceback.format_exception(*exc_info)
-    return ''.join(line for line in lines)
+from common.message_utils import format_exc_info, ExtendedJsonEncoder
 
 
 class PersistentHTTPHandler(HTTPHandler):
@@ -54,6 +33,7 @@ class PersistentHTTPHandler(HTTPHandler):
         except:
             self.handleError(record)
 
+
 class MongoHTTPHandler(HTTPHandler):
     def __init__(self, db_host, db_port, db_name, collection, host, url, method):
         HTTPHandler.__init__(self, host, url, method)
@@ -69,6 +49,8 @@ class MongoHTTPHandler(HTTPHandler):
             record_modified['msg'] = self.format(record)
         except:
             pass
+        record_modified['exc_info'] = format_exc_info(record_modified['exc_info'])
+        record_modified['args'] = str(record_modified['args'])
         return record_modified
 
     def emit(self, record):
@@ -84,7 +66,8 @@ class MongoHTTPHandler(HTTPHandler):
                 'collection': self.collection,
                 'data': data,
             }
-            self.s.post(url, json=json.dumps(json_data), timeout=10)
+            json_data = json.dumps(json_data, cls=ExtendedJsonEncoder)
+            self.s.post(url, json=json_data, timeout=10)
 
         except (KeyboardInterrupt, SystemExit):
             raise

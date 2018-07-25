@@ -28,7 +28,7 @@ LOGGING = {
     },
     'loggers': {
         'test_logger': {
-            'handlers': ['test', 'test_mongo'],
+            'handlers': ['test_mongo'],
             'level': 'INFO',
             'propagate': True,
         },
@@ -39,7 +39,12 @@ logging.config.dictConfig(LOGGING)
 
 if __name__ == '__main__':
     logger = logging.getLogger('test_logger')
-    start = time.time()
-    for i in range(0, 1):
-        logger.info('1' * 100)
-    print(time.time() - start)
+    try:
+        a = 1/0
+    except:
+        logger.exception('error')
+    # start = time.time()
+    # for i in range(0, 1):
+    #     logger.info('1' * 100)
+    #
+    # print(time.time() - start)

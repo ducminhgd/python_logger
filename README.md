@@ -91,6 +91,8 @@ class MongoHTTPHandler(HTTPHandler):
             record_modified['msg'] = self.format(record)
         except:
             pass
+        record_modified['exc_info'] = format_exc_info(record_modified['exc_info'])
+        record_modified['args'] = str(record_modified['args'])
         return record_modified
 
     def emit(self, record):
@@ -106,7 +108,8 @@ class MongoHTTPHandler(HTTPHandler):
                 'collection': self.collection,
                 'data': data,
             }
-            self.s.post(url, json=json.dumps(json_data), timeout=10)
+            json_data = json.dumps(json_data, cls=ExtendedJsonEncoder)
+            self.s.post(url, json=json_data, timeout=10)
 
         except (KeyboardInterrupt, SystemExit):
             raise
