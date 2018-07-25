@@ -3,6 +3,7 @@
 
 ## Sample configuration
 
+### Client Side
 ```python
 LOGGING = {
     'version': 1,
@@ -23,10 +24,21 @@ LOGGING = {
             'sender': 'System name or Host name',
             'channel': '#slack-notification',
         },
+        'test_mongo': {
+            'level': 'INFO',
+            'class': 'demo_handlers.MongoHTTPHandler',
+            'url': 'http-mongo-logger/',
+            'host': 'localhost:1234',
+            'method': 'POST',
+            'db_host': '127.0.0.1',
+            'db_port': '27017',
+            'db_name': 'logs',
+            'collection': 'logs',
+        }
     },
     'loggers': {
         'test_logger': {
-            'handlers': ['test'],
+            'handlers': ['test', 'test_mongo'],
             'level': 'INFO',
             'propagate': True,
         },
@@ -35,6 +47,8 @@ LOGGING = {
 ```
 
 ## Sample Log Hanlder
+
+### File HTTP Handler
 
 ```python
 import requests
@@ -59,6 +73,50 @@ class PersistentHTTPHandler(HTTPHandler):
             url = 'http://' + host + '/' + url
             data = self.mapLogRecord(record)
             self.s.post(url, data=data, timeout=10)
+
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
+```
+
+### Mongo HTTP Handler
+
+```python
+class MongoHTTPHandler(HTTPHandler):
+    def __init__(self, db_host, db_port, db_name, collection, host, url, method):
+        HTTPHandler.__init__(self, host, url, method)
+        self.db_host = db_host
+        self.db_port = db_port
+        self.db_name = db_name
+        self.collection = collection
+        self.s = requests.Session()
+
+    def mapLogRecord(self, record):
+        record_modified = HTTPHandler.mapLogRecord(self, record)
+        try:
+            record_modified['msg'] = self.format(record)
+        except:
+            pass
+        record_modified['exc_info'] = format_exc_info(record_modified['exc_info'])
+        record_modified['args'] = str(record_modified['args'])
+        return record_modified
+
+    def emit(self, record):
+        try:
+            host = self.host
+            url = self.url
+            url = 'http://' + host + '/' + url
+            data = self.mapLogRecord(record)
+            json_data = {
+                'db_host': self.db_host,
+                'db_port': self.db_port,
+                'db_name': self.db_name,
+                'collection': self.collection,
+                'data': data,
+            }
+            json_data = json.dumps(json_data, cls=ExtendedJsonEncoder)
+            self.s.post(url, json=json_data, timeout=10)
 
         except (KeyboardInterrupt, SystemExit):
             raise
@@ -95,3 +153,8 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
+
+## Contributors
+
+- ducminhgd
+- vchitai
