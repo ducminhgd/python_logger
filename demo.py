@@ -8,16 +8,27 @@ LOGGING = {
     'handlers': {
         'test': {
             'level': 'INFO',
-            'class': 'demo_hanlders.PersistentHTTPHandler',
+            'class': 'demo_handlers.PersistentHTTPHandler',
             'url': 'http-daily-logger/',
             'host': 'localhost:1234',
             'method': 'POST',
             'logPath': '/tmp/python_logger/log'
         },
+        'test_mongo': {
+            'level': 'INFO',
+            'class': 'demo_handlers.MongoHTTPHandler',
+            'url': 'http-mongo-logger/',
+            'host': 'localhost:1234',
+            'method': 'POST',
+            'db_host': '127.0.0.1',
+            'db_port': '27017',
+            'db_name': 'logs',
+            'collection': 'logs',
+        }
     },
     'loggers': {
         'test_logger': {
-            'handlers': ['test'],
+            'handlers': ['test_mongo'],
             'level': 'INFO',
             'propagate': True,
         },
@@ -28,7 +39,12 @@ logging.config.dictConfig(LOGGING)
 
 if __name__ == '__main__':
     logger = logging.getLogger('test_logger')
-    start = time.time()
-    for i in range(0, 1):
-        logger.info('1' * 100)
-    print(time.time() - start)
+    try:
+        a = 1/0
+    except:
+        logger.exception('error')
+    # start = time.time()
+    # for i in range(0, 1):
+    #     logger.info('1' * 100)
+    #
+    # print(time.time() - start)
