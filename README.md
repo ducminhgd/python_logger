@@ -16,6 +16,13 @@ LOGGING = {
             'method': 'POST',
             'logPath': '/tmp/python_logger/log'
         },
+        'slack_notification': {
+            'level': 'ERROR',
+            'class': 'demo_hanlders.LogSlackHandler',
+            'webhook': 'Slack web hook',
+            'sender': 'System name or Host name',
+            'channel': '#slack-notification',
+        },
     },
     'loggers': {
         'test_logger': {
