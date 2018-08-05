@@ -6,3 +6,4 @@ requests==2.18.4
 urllib3==1.22
 gevent==1.2.2
 pymongo==3.7.1
+redis==2.10.6
