@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 import logging.config
-import time
 
 LOGGING = {
     'version': 1,
@@ -16,7 +15,7 @@ LOGGING = {
         },
         'test_mongo': {
             'level': 'INFO',
-            'class': 'demo_handlers.MongoHTTPHandler',
+            'class': 'handlers.http_handler.MongoHTTPHandler',
             'url': 'http-mongo-logger/',
             'host': 'localhost:1234',
             'method': 'POST',
@@ -40,7 +39,7 @@ logging.config.dictConfig(LOGGING)
 if __name__ == '__main__':
     logger = logging.getLogger('test_logger')
     try:
-        a = 1/0
+        a = 1 / 0
     except:
         logger.exception('error')
     # start = time.time()
