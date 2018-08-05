@@ -1,10 +1,8 @@
-# coding=utf-8
 import json
+import requests
 from logging.handlers import HTTPHandler
 
-import requests
-
-from common.utils import format_stack_trace, ExtendedJsonEncoder
+from common.message_utils import ExtendedJsonEncoder, format_stack_trace
 
 
 class PersistentHTTPHandler(HTTPHandler):

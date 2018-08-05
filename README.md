@@ -23,10 +23,21 @@ LOGGING = {
             'sender': 'System name or Host name',
             'channel': '#slack-notification',
         },
+        'test_mongo': {
+            'level': 'INFO',
+            'class': 'demo_handlers.MongoHTTPHandler',
+            'url': 'http-mongo-logger/',
+            'host': 'localhost:1234',
+            'method': 'POST',
+            'db_host': '127.0.0.1',
+            'db_port': '27017',
+            'db_name': 'logs',
+            'collection': 'logs',
+        }
     },
     'loggers': {
         'test_logger': {
-            'handlers': ['test'],
+            'handlers': ['test', 'test_mongo'],
             'level': 'INFO',
             'propagate': True,
         },
