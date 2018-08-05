@@ -8,7 +8,7 @@ LOGGING = {
     'handlers': {
         'test': {
             'level': 'INFO',
-            'class': 'demo_hanlders.PersistentHTTPHandler',
+            'class': 'handlers.http_handler.PersistentHTTPHandler',
             'url': 'http-daily-logger/',
             'host': 'localhost:1234',
             'method': 'POST',
