@@ -23,7 +23,8 @@ class RedisHandler(logging.Handler):
     }
     _log_all_key = '{sender}:LOG'
 
-    def __init__(self, level=logging.INFO, sender=None, host='127.0.0.1', port=6379, db=0, options=None):
+    def __init__(self, level=logging.INFO, sender=None, host='127.0.0.1', port=6379, db=0,
+                 options=None):
         logging.Handler.__init__(self)
         config_dict = {
             'HOST': host,
@@ -51,6 +52,7 @@ class RedisHandler(logging.Handler):
         :return:
         """
         record.msg = self.format(record)
+        record.exc_info = record.exc_text
         return record.__dict__
 
     def emit(self, record):
@@ -109,4 +111,4 @@ if __name__ == '__main__':
     try:
         a = 1 / 0
     except:
-        logger.error('error')
+        logger.exception('error')
