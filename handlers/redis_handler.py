@@ -12,19 +12,19 @@ class RedisHandler(logging.Handler):
     Redis Handler
     """
     _connection = None
-    _sender = None
+    _root_key = None
     _log_level_keys = {
-        logging.CRITICAL: '{sender}:CRITICAL',
-        logging.ERROR: '{sender}:ERROR',
-        logging.WARNING: '{sender}:WARNING',
-        logging.INFO: '{sender}:INFO',
-        logging.DEBUG: '{sender}:DEBUG',
-        logging.NOTSET: '{sender}:NOTSET',
+        logging.CRITICAL: '{root_key}:CRITICAL',
+        logging.ERROR: '{root_key}:ERROR',
+        logging.WARNING: '{root_key}:WARNING',
+        logging.INFO: '{root_key}:INFO',
+        logging.DEBUG: '{root_key}:DEBUG',
+        logging.NOTSET: '{root_key}:NOTSET',
     }
-    _log_all_key = '{sender}:LOG'
+    _log_all_key = '{root_key}:LOG'
     _write_log_all = True
 
-    def __init__(self, sender=None, host='127.0.0.1', port=6379, db=0, options=None):
+    def __init__(self, root_key=None, host='127.0.0.1', port=6379, db=0, options=None):
         logging.Handler.__init__(self)
         config_dict = {
             'HOST': host,
@@ -32,20 +32,21 @@ class RedisHandler(logging.Handler):
             'DB': db,
             'OPTIONS': options or {},
         }
+        connection_url = '{host}:{port}/{db}'.format(host=host, port=port, db=db)
 
         self._write_log_all = options.get('all', True)
 
-        # Get sender's name
-        if sender is None:
-            sender = socket.gethostname()
-        self._sender = sender
+        # Get root_key's name
+        if root_key is None:
+            root_key = socket.gethostname()
+        self._root_key = root_key
 
         # Parsing keys
         for key, value in self._log_level_keys.items():
-            self._log_level_keys[key] = value.format(sender=sender)
-        self._log_all_key = self._log_all_key.format(sender=sender)
+            self._log_level_keys[key] = value.format(root_key=root_key)
+        self._log_all_key = self._log_all_key.format(root_key=root_key)
 
-        self._connection = redis_helper.connect(sender, config_dict)
+        self._connection = redis_helper.connect(connection_url, config_dict)
 
     def mapLogRecord(self, record):
         """
@@ -95,7 +96,7 @@ if __name__ == '__main__':
                 'formatter': 'simple',
                 'level': 'INFO',
                 'class': 'handlers.redis_handler.RedisHandler',
-                'sender': None,
+                'root_key': None,
                 'host': '127.0.0.1',
                 'port': 6379,
                 'db': 1,
