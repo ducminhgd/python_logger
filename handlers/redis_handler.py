@@ -51,7 +51,7 @@ class RedisHandler(logging.Handler):
         :param record:
         :return:
         """
-        record.msg = self.format(record)
+        self.format(record)
         record.exc_info = record.exc_text
         return record.__dict__
 
@@ -111,4 +111,8 @@ if __name__ == '__main__':
     try:
         a = 1 / 0
     except:
-        logger.exception('error')
+        d = {
+            'a': 1,
+            'b': 2,
+        }
+        logger.exception(d)
