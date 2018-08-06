@@ -22,9 +22,9 @@ class RedisHandler(logging.Handler):
         logging.NOTSET: '{sender}:NOTSET',
     }
     _log_all_key = '{sender}:LOG'
+    _write_log_all = True
 
-    def __init__(self, level=logging.INFO, sender=None, host='127.0.0.1', port=6379, db=0,
-                 options=None):
+    def __init__(self, sender=None, host='127.0.0.1', port=6379, db=0, options=None):
         logging.Handler.__init__(self)
         config_dict = {
             'HOST': host,
@@ -32,6 +32,8 @@ class RedisHandler(logging.Handler):
             'DB': db,
             'OPTIONS': options or {},
         }
+
+        self._write_log_all = options.get('all', True)
 
         # Get sender's name
         if sender is None:
@@ -64,7 +66,8 @@ class RedisHandler(logging.Handler):
         try:
             dict_data = self.mapLogRecord(record)
             json_data = json.dumps(dict_data, cls=utils.ExtendedJsonEncoder)
-            self._connection.rpush(self._log_all_key, json_data)
+            if self._write_log_all:
+                self._connection.rpush(self._log_all_key, json_data)
             self._connection.rpush(self._log_level_keys[dict_data['levelno']], json_data)
         except (KeyboardInterrupt, SystemExit):
             raise
@@ -96,6 +99,9 @@ if __name__ == '__main__':
                 'host': '127.0.0.1',
                 'port': 6379,
                 'db': 1,
+                'options': {
+                    'all': False,
+                },
             },
         },
         'loggers': {
