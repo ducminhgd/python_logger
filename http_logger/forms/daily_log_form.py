@@ -4,6 +4,7 @@ import datetime
 import os
 from django import forms
 from django.utils import timezone, six
+from common.utils import cleanup
 
 
 class DailyFileManager(object):
@@ -59,11 +60,12 @@ class DailyLogForm(forms.Form):
     funcName = forms.CharField()
     msg = forms.CharField()
     logPath = forms.CharField()
+    log_keep_alive = forms.IntegerField(required=False)
 
     def write_file(self):
         msg = self.cleaned_data['msg'] + '\n'
         logPath = self.cleaned_data["logPath"]
-
+        log_keep_alive = self.cleaned_data['log_keep_alive']
         if not daily_file_manager.is_open(logPath):
             daily_file_manager.open(logPath)
 
@@ -71,3 +73,6 @@ class DailyLogForm(forms.Form):
             msg = msg.encode('UTF-8')
 
         daily_file_manager.write(logPath, msg)
+        # clean up
+        if log_keep_alive is not None:
+            cleanup(log_keep_alive, logPath)
