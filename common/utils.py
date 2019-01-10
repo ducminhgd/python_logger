@@ -31,9 +31,10 @@ def format_stack_trace(exc_info):
 
 def cleanup(day_keep_alive, log_dir):
     current_time = time.time()
+    day_conversion_unit = 24 * 3600
     for f in os.listdir(log_dir):
         modified_time = os.path.getctime(f)
-        if (current_time - modified_time) // (24 * 3600) <= day_keep_alive:
+        if (current_time - modified_time) // day_conversion_unit <= day_keep_alive:
             continue
         os.unlink(f)
         print('File {} has been removed'.format(f))
