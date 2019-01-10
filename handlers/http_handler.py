@@ -8,9 +8,10 @@ from common.utils import format_stack_trace, ExtendedJsonEncoder
 
 
 class PersistentHTTPHandler(HTTPHandler):
-    def __init__(self, logPath, host, url, method):
+    def __init__(self, log_path, host, url, method, day=None):
         HTTPHandler.__init__(self, host, url, method)
-        self.logPath = logPath
+        self.logPath = log_path
+        self.day = day
         self.s = requests.Session()
 
     def mapLogRecord(self, record):

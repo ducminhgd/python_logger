@@ -45,7 +45,7 @@ LOGGING = {
 }
 ```
 
-## Sample Log Hanlder
+## Sample Log Handler
 
 ```python
 import requests

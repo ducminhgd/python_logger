@@ -4,6 +4,8 @@ from django.utils import timezone
 import datetime
 import decimal
 import json
+import os
+import time
 import traceback
 
 
@@ -27,6 +29,15 @@ def format_stack_trace(exc_info):
     lines = traceback.format_exception(*exc_info)
     return ''.join(line for line in lines)
 
+def cleanup(day_keep_alive, log_dir):
+    current_time = time.time()
+    day_conversion_unit = 24 * 3600
+    for f in os.listdir(log_dir):
+        modified_time = os.path.getctime(f)
+        if (current_time - modified_time) // day_conversion_unit <= day_keep_alive:
+            continue
+        os.unlink(f)
+        print('File {} has been removed'.format(f))
 
 class ExtendedJsonEncoder(json.JSONEncoder):
     def default(self, obj):
