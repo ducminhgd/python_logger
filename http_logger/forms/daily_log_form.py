@@ -4,6 +4,7 @@ import datetime
 import os
 from django import forms
 from django.utils import timezone, six
+from common.utils import cleanup
 
 
 class DailyFileManager(object):
@@ -12,7 +13,7 @@ class DailyFileManager(object):
         self.open_files = {}
         self.current_date = timezone.now().date()
 
-    def is_open(self, file_name):
+    def is_open(self, file_name, day):
         if timezone.now().date() != self.current_date:
             old_current_date = self.current_date
             self.current_date = timezone.now().date()
@@ -32,6 +33,9 @@ class DailyFileManager(object):
                     os.rename(key, archive_file_name)
 
                 self.open_files[key] = open('%s' % key, 'a')
+            # clean up
+            if day is not None:
+                cleanup(day, file_name)
         if file_name in self.open_files:
             return True
         return False
@@ -59,12 +63,13 @@ class DailyLogForm(forms.Form):
     funcName = forms.CharField()
     msg = forms.CharField()
     logPath = forms.CharField()
+    day = forms.IntegerField(required=False)
 
     def write_file(self):
         msg = self.cleaned_data['msg'] + '\n'
         logPath = self.cleaned_data["logPath"]
-
-        if not daily_file_manager.is_open(logPath):
+        day = self.cleaned_data['day']
+        if not daily_file_manager.is_open(logPath, day):
             daily_file_manager.open(logPath)
 
         if six.PY2:

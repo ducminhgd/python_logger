@@ -9,10 +9,12 @@ LOGGING = {
         'test': {
             'level': 'INFO',
             'class': 'handlers.http_handler.PersistentHTTPHandler',
+            'formatter': 'verbose',
             'url': 'http-daily-logger/',
             'host': 'localhost:1234',
             'method': 'POST',
-            'logPath': '/tmp/python_logger/log'
+            'log_path': '/tmp/python_logger/log',
+            'day': 20    # keep logs changed within n days
         },
         'test_mongo': {
             'level': 'INFO',
@@ -28,11 +30,21 @@ LOGGING = {
     },
     'loggers': {
         'test_logger': {
-            'handlers': ['test_mongo'],
+            'handlers': ['test'],
             'level': 'INFO',
             'propagate': True,
         },
-    }
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s | %(levelname)s | %(process)d | %(thread)d | %(filename)s:%('
+                      'lineno)d | %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+        'simple': {
+            'format': '%(levelname)s | %(message)s'
+        },
+    },
 }
 
 logging.config.dictConfig(LOGGING)
