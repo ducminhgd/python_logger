@@ -33,11 +33,12 @@ def cleanup(day_keep_alive, log_dir):
     current_time = time.time()
     day_conversion_unit = 24 * 3600
     for f in os.listdir(log_dir):
-        modified_time = os.path.getctime(f)
+        file_path = os.path.join(log_dir, f)
+        modified_time = os.path.getctime(file_path)
         if (current_time - modified_time) // day_conversion_unit <= day_keep_alive:
             continue
-        os.unlink(f)
-        print('File {} has been removed'.format(f))
+        os.unlink(file_path)
+        print('File {} has been removed'.format(file_path))
 
 class ExtendedJsonEncoder(json.JSONEncoder):
     def default(self, obj):
