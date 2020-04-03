@@ -1,9 +1,0 @@
-Django==2.1.11
-gunicorn==19.7.1
-python-dotenv==0.7.1
-pytz==2018.3
-requests==2.20.0
-urllib3==1.23
-gevent==1.2.2
-pymongo==3.7.1
-redis==2.10.6

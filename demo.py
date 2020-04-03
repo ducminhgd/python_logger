@@ -26,11 +26,16 @@ LOGGING = {
             'db_port': '27017',
             'db_name': 'logs',
             'collection': 'logs',
-        }
+        },
+        'test_telegram': {
+            'class': 'handlers.telegram_handler.LogTelegramHandler',
+            'token': '<token>',
+            'chat_id': '<chat_id>'
+        },
     },
     'loggers': {
         'test_logger': {
-            'handlers': ['test'],
+            'handlers': ['test_telegram'],
             'level': 'INFO',
             'propagate': True,
         },
@@ -54,9 +59,4 @@ if __name__ == '__main__':
     try:
         a = 1 / 0
     except:
-        logger.exception('error')
-    # start = time.time()
-    # for i in range(0, 1):
-    #     logger.info('1' * 100)
-    #
-    # print(time.time() - start)
+        logger.exception('*ZeroDivision error*')
