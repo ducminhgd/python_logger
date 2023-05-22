@@ -12,7 +12,7 @@ pymongo = "~=3.10"
 python-dotenv = "~=0.12"
 pytz = "~=2019"
 redis = "~=4.4"
-requests = "~=2.23"
+requests = "~=2.31"
 urllib3 = "~=1.25"
 
 [requires]
